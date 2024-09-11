@@ -15,7 +15,7 @@ class NavigationMenu extends StatelessWidget {
         onDestinationSelected: (index) => controller.selectedIndex.value =index,
 
         destinations: const [
-            NavigationDestination(icon: Icon(Icons.home), label: "Inicio"),
+            NavigationDestination(icon: Icon(Icons.home), label: "Inicios"),
             NavigationDestination(icon: Icon(Icons.add), label: "Realizar Reservacion"),
             NavigationDestination(icon: Icon(Icons.find_in_page), label: "Ver Reservacion"),
             NavigationDestination(icon: Icon(Icons.print), label: "Imprimir Reservacion"),
