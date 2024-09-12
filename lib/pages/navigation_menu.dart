@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myapp/screen/reservation_screen.dart';
-import 'home_screen.dart';
-import 'restaurant_screen.dart';
+import 'package:myapp/pages/home_page.dart';
+import 'package:myapp/pages/list_page.dart';
+import 'package:myapp/pages/print_reservation_page.dart';
+
+import 'reservation_page.dart';
 
 class NavigationMenu extends StatelessWidget {
-  final controller = Get.put(NavigationController());
+  final NavigationController controller = Get.put(NavigationController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Obx(
         () => NavigationBar(
-          height: 70, // Ajusta el tamaño si es necesario
+          height: 70,
           selectedIndex: controller.selectedIndex.value,
           onDestinationSelected: (index) => controller.changeIndex(index),
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: "Inicio"),
             NavigationDestination(icon: Icon(Icons.local_restaurant), label: "Reservar"),
             NavigationDestination(icon: Icon(Icons.event_available), label: "Disponible"),
-            NavigationDestination(icon: Icon(Icons.view_list), label: "Reservaciones"),
+            NavigationDestination(icon: Icon(Icons.print), label: "Imprimir"),
           ],
         ),
       ),
@@ -29,18 +31,15 @@ class NavigationMenu extends StatelessWidget {
 }
 
 class NavigationController extends GetxController {
-  // Observa el índice seleccionado
   final selectedIndex = 0.obs;
 
-  // Define las pantallas que se mostrarán según el índice
   final screens = [
     const HomeScreen(),
     RestaurantView(),
-    Reservation(), // Ajusta el nombre según tu implementación
-    Container(color: Colors.blue), // Pantalla para "Imprimir"
+    Container(color: Colors.blue), // Placeholder for "Disponible"
+    RestaurantView(), // Corregido aquí
   ];
 
-  // Cambia el índice seleccionado
   void changeIndex(int index) {
     selectedIndex.value = index;
   }

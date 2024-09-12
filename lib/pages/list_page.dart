@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/screen/reservation_screen.dart';
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: RestaurantView(),
-    );
-  }
-}
+import 'reservation_page.dart';
 
 class RestaurantView extends StatelessWidget {
-
   final List<String> images = [
     'assets/images/ember.png',
     'assets/images/zao.png',
     'assets/images/grappa.png',
     'assets/images/larimar.png',
+  ];
+
+  final List<String> restaurantNames = [
+    'Ember',
+    'Zao',
+    'Grappa',
+    'Larimar',
   ];
 
   @override
@@ -29,10 +24,10 @@ class RestaurantView extends StatelessWidget {
       ),
       body: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Número de columnas
-          mainAxisSpacing: 10.0, // Espacio entre las filas
-          crossAxisSpacing: 10.0, // Espacio entre las columnas
-          childAspectRatio: 3 / 2, // Relación de aspecto para ajustar el tamaño
+          crossAxisCount: 2,
+          mainAxisSpacing: 10.0,
+          crossAxisSpacing: 10.0,
+          childAspectRatio: 3 / 2,
         ),
         itemCount: images.length,
         itemBuilder: (context, index) {
@@ -45,24 +40,29 @@ class RestaurantView extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => RestaurantDetailScreen(
                       image: images[index],
+                      restaurantName: restaurantNames[index],
                     ),
                   ),
                 );
               },
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      child: Image.asset(
-                        images[index],
-                        fit: BoxFit.cover,
-                      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Image.asset(
+                      images[index],
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: 10),         
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    restaurantNames[index],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -74,17 +74,25 @@ class RestaurantView extends StatelessWidget {
 
 class RestaurantDetailScreen extends StatelessWidget {
   final String image;
-  
+  final String restaurantName;
 
   const RestaurantDetailScreen({
     Key? key,
     required this.image,
+    required this.restaurantName,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -96,14 +104,23 @@ class RestaurantDetailScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 20),
-           
+            Text(
+              restaurantName,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ReservationScreen(),
+                    builder: (context) => ReservationPage(
+                      restaurantName: restaurantName,
+                      reservations: [], addReservation: (Reservation ) {  }, // Lista de reservaciones inicial vacía
+                    ),
                   ),
                 );
               },
@@ -111,20 +128,6 @@ class RestaurantDetailScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ReservationScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Reservación'),
-      ),
-      body: const Center(
-        child: Reservation(),
       ),
     );
   }

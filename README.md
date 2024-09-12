@@ -1,4 +1,4 @@
-# tropicalreserve
+# Tropical Reserve
 
 A new Flutter project.
 
