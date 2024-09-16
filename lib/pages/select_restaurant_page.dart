@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/lista_global.dart';
-import 'reservation_page.dart';
+import 'reservacion_page.dart';
 
 class RestaurantView extends StatelessWidget {
   final List<String> images = [
@@ -156,5 +156,6 @@ class RestaurantDetailScreen extends StatelessWidget {
         ),
       ),
     );
-  }
+  } 
 }
+ 

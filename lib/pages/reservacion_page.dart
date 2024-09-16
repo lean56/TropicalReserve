@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../lista_global.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -69,7 +68,9 @@ class _ReservationPageState extends State<ReservationPage> {
     // Verificar disponibilidad antes de agregar la reservación
     if (!verificarDisponibilidad(widget.restaurantName, dropdownHorario)) {
       setState(() {
-        _errorText = 'Capacidad máxima alcanzada. No se pueden reservar más mesas en este horario.';
+       // _errorText = 'Capacidad máxima alcanzada. No se pueden reservar más mesas en este horario.';
+        _controller.clear();
+        AlertError();
       });
       return;
     }
@@ -93,14 +94,33 @@ class _ReservationPageState extends State<ReservationPage> {
 
       // Agregar la reservación a la lista global
       listaGlobal.add(reservacion);
+      AlertSuccess(); 
+      _controller.clear(); // limpiar campo de texto
 
-      // Mostrar una alerta de éxito
-      QuickAlert.show(
-        context: context,
-        type: QuickAlertType.error,
-        text: '¡Reservacion realizada con exito!',
-      );
     });
+  }
+
+ // Mostrar una alerta de exito
+  void AlertSuccess(){
+   QuickAlert.show(
+      context: context,
+      type: QuickAlertType.success,
+      title: '',
+      text: '¡Reservacion realizada con exito!',
+      autoCloseDuration: const Duration(seconds: 3),
+      showConfirmBtn: false,
+    );
+  }
+
+  void AlertError(){
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.error,
+      title: '',
+      text: 'Capacidad máxima alcanzada. No se pueden reservar más mesas en este horario.',
+      autoCloseDuration: const Duration(seconds: 6),
+      showConfirmBtn: false,
+    );
   }
 
   // Navegar a la pantalla de reservaciones

@@ -4,7 +4,7 @@ import 'package:myapp/lista_global.dart';
 import 'disponibilidad_page.dart';
 import 'home_page.dart';
 import 'select_restaurant_page.dart';
-import 'reservation_page.dart';
+import 'reservacion_page.dart';
 
 class NavigationMenu extends StatelessWidget {
   final NavigationController controller = Get.put(NavigationController());

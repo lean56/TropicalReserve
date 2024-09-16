@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/lista_global.dart';
-import 'package:myapp/pages/reservation_page.dart';
+import 'package:myapp/pages/reservacion_page.dart';
 
 class DisponibilidadPage extends StatelessWidget {
   @override
