@@ -1,27 +1,38 @@
-// reservation_page.dart
 import 'package:flutter/material.dart';
-import 'package:myapp/globals.dart'; // Solo esta importación es necesaria
+import 'package:get/get.dart';
+import '../lista_global.dart';
+import 'package:quickalert/quickalert.dart';
 
 // Modelo de Reservación
-class Reservation {
-  final String restaurantName;
-  final String name;
-  final String numberOfPeople;
-  final String timeSlot;
+class Reservacion {
+  final String nombreRestaurante;
+  final String nombre;
+  final String num_persona;
+  final String horario;
+  final int capacidades;
 
-  Reservation({
-     required this.restaurantName,
-     required this.name,
-     required this.numberOfPeople,
-     required this.timeSlot,
+  Reservacion({
+    required this.nombreRestaurante,
+    required this.nombre,
+    required this.num_persona,
+    required this.horario,
+    required this.capacidades,
   });
 }
+
+// Capacidad máxima por restaurante
+final Map<String, int> capacidadMaxima = {
+  "Ember": 3,
+  "Zao": 4,
+  "Grappa": 2,
+  "Larimar": 3
+};
 
 // Pantalla para realizar reservaciones
 class ReservationPage extends StatefulWidget {
   final String restaurantName;
 
-  ReservationPage({ required this.restaurantName,  required Null Function(Reservation reservation) addReservation,  required List reservations});
+  const ReservationPage({super.key, required this.restaurantName, required List<Reservacion> reservations, required Null Function() onShowReservations, required Null Function(Reservacion reservation) addReservation});
 
   @override
   State<ReservationPage> createState() => _ReservationPageState();
@@ -37,69 +48,68 @@ class _ReservationPageState extends State<ReservationPage> {
   final List<String> list = ['1 Persona', '2 Personas', '3 Personas', '4 Personas'];
   final List<String> list_hora = ['6-8 P.M.', '8-10 P.M.'];
 
-  void realizarReservacion() {
-    if (_inputText.isEmpty) {
-      setState(() {
-        _errorText = 'Por favor ingrese un nombre';
-      });
-    } else {
-      setState(() {
-        _errorText = '';
-        final reservacion = Reservation(
-          restaurantName: widget.restaurantName,
-          name: _inputText,
-          numberOfPeople: dropdownValue,
-          timeSlot: dropdownHorario,
-        );
+  // Verificar si un restaurante tiene disponibilidad en un horario 
+  bool verificarDisponibilidad(String restaurante, String horario) {
+    int capacidadMaximaRestaurante = capacidadMaxima[restaurante] ?? 0;
+    int capacidadActual = 0;
 
-        // Accede a la lista global directamente
-        globalList.add(reservacion);
-
-        // Mostrar un diálogo de confirmación antes de regresar
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Confirmación de Reservación'),
-              content: Text('Reservación confirmada:\n${reservacion.restaurantName}\n${reservacion.name}\n${reservacion.numberOfPeople}\n${reservacion.timeSlot}'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Cierra el diálogo
-                    _controller.clear();
-                    _inputText = '';
-                    setState(() {});
-                  },
-                  child: Text('Agregar más reservas'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Cierra el diálogo
-                    mostrarReservaciones(); // Navega a la pantalla de reservas
-                  },
-                  child: Text('Ver Reservaciones'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Cierra el diálogo
-                    Navigator.pop(context); // Regresa a la pantalla anterior
-                  },
-                  child: Text('Cancelar'),
-                ),
-              ],
-            );
-          },
-        );
-      });
+    for (var reservacion in listaGlobal) {
+      if (reservacion.nombreRestaurante == restaurante &&
+          reservacion.horario == horario) {
+          capacidadActual++;
+      }
     }
+    return capacidadActual < capacidadMaximaRestaurante;
   }
 
+  // Método para realizar la reservación
+  void realizarReservacion() {
+    int capacidadRestaurante = capacidadMaxima[widget.restaurantName] ?? 0;
+
+    // Verificar disponibilidad antes de agregar la reservación
+    if (!verificarDisponibilidad(widget.restaurantName, dropdownHorario)) {
+      setState(() {
+        _errorText = 'Capacidad máxima alcanzada. No se pueden reservar más mesas en este horario.';
+      });
+      return;
+    }
+
+    if (_inputText.isEmpty) {
+      setState(() {
+        _errorText = 'Por favor ingrese su nombre';
+      });
+      return;
+    }
+
+    setState(() {
+      _errorText = '';
+      final reservacion = Reservacion(
+        nombreRestaurante: widget.restaurantName,
+        nombre: _inputText,
+        num_persona: dropdownValue,
+        horario: dropdownHorario,
+        capacidades: capacidadRestaurante,
+      );
+
+      // Agregar la reservación a la lista global
+      listaGlobal.add(reservacion);
+
+      // Mostrar una alerta de éxito
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        text: '¡Reservacion realizada con exito!',
+      );
+    });
+  }
+
+  // Navegar a la pantalla de reservaciones
   void mostrarReservaciones() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ReservationsListScreen(
-          reservations: globalList, // Pasa la lista global a la pantalla de reservas
+          reservations: listaGlobal, // Pasa la lista global a la pantalla de reservas
         ),
       ),
     );
@@ -169,7 +179,7 @@ class _ReservationPageState extends State<ReservationPage> {
             ),
             ElevatedButton(
               onPressed: mostrarReservaciones,
-              child: const Text('Ver Reservación'),
+              child: const Text('Ver Reservaciones'),
             ),
           ],
         ),
@@ -180,34 +190,74 @@ class _ReservationPageState extends State<ReservationPage> {
 
 // Pantalla para mostrar la lista de reservaciones
 class ReservationsListScreen extends StatelessWidget {
-  final List<Reservation> reservations;
+  final List<Reservacion> reservations;
 
-  ReservationsListScreen({required this.reservations});
+  const ReservationsListScreen({super.key, required this.reservations});
 
   @override
   Widget build(BuildContext context) {
+    // Agrupamos las reservaciones por restaurante
+    final groupedReservations = <String, Map<String, List<Reservacion>>>{};
+
+    for (var reservacion in reservations) {
+      if (!groupedReservations.containsKey(reservacion.nombreRestaurante)) {
+        groupedReservations[reservacion.nombreRestaurante] = {};
+      }
+
+      var restaurantReservations = groupedReservations[reservacion.nombreRestaurante]!;
+
+      if (!restaurantReservations.containsKey(reservacion.horario)) {
+        restaurantReservations[reservacion.horario] = [];
+      }
+
+      restaurantReservations[reservacion.horario]!.add(reservacion);
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de Reservaciones'),
+        title: const Text('Lista de Reservaciones'),
       ),
-      body: reservations.isEmpty
-        ? Center(child: Text('No hay reservaciones'))
-        : ListView.separated(
-            itemCount: reservations.length,
-            separatorBuilder: (context, index) => Divider(),
-            itemBuilder: (context, index) {
-              final reservation = reservations[index];
-              return ListTile(
-                title: Text(reservation.restaurantName),
-                subtitle: Text(
-                  'Nombre: ${reservation.name}\n'
-                  'Número de personas: ${reservation.numberOfPeople}\n'
-                  'Horario: ${reservation.timeSlot}',
-                ),
-                isThreeLine: true,
-              );
-            },
-          ),
+      body: ListView.builder(
+        itemCount: groupedReservations.keys.length,
+        itemBuilder: (context, index) {
+          String nombre_restaurante = groupedReservations.keys.elementAt(index);
+          var restaurantReservations = groupedReservations[nombre_restaurante]!;
+
+          return Card(
+            margin: const EdgeInsets.all(8.0),
+            child: ExpansionTile(
+              title: Text(nombre_restaurante),
+              children: restaurantReservations.keys.map((timeSlot) {
+                List<Reservacion> horario = restaurantReservations[timeSlot]!;
+
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Horario: $timeSlot',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      ...horario.map((reservation) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Text(
+                            'Nombre: ${reservation.nombre}\n'
+                            'Número de personas: ${reservation.num_persona}',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        );
+                      }).toList(),
+                      const Divider(),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          );
+        },
+      ),
     );
   }
 }

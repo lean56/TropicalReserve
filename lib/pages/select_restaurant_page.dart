@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/lista_global.dart';
 import 'reservation_page.dart';
 
 class RestaurantView extends StatelessWidget {
@@ -15,6 +16,14 @@ class RestaurantView extends StatelessWidget {
     'Grappa',
     'Larimar',
   ];
+
+
+  final Map<String, int> capacidades = {
+    'Ember': 3,
+    'Zao': 4,
+    'Grappa': 2,
+    'Larimar': 3,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +49,8 @@ class RestaurantView extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => RestaurantDetailScreen(
                       image: images[index],
-                      restaurantName: restaurantNames[index],
+                      nombreRestaurante: restaurantNames[index],
+                      reservacion: listaGlobal, // Pasa la lista global de reservaciones
                     ),
                   ),
                 );
@@ -74,13 +84,26 @@ class RestaurantView extends StatelessWidget {
 
 class RestaurantDetailScreen extends StatelessWidget {
   final String image;
-  final String restaurantName;
+  final String nombreRestaurante;
+  final List<Reservacion> reservacion; // Lista de reservaciones
 
   const RestaurantDetailScreen({
     Key? key,
     required this.image,
-    required this.restaurantName,
+    required this.nombreRestaurante,
+    required this.reservacion, // Inicializa la lista de reservaciones
   }) : super(key: key);
+
+  void mostrarReservaciones(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReservationsListScreen(
+          reservations: reservacion, // Pasa la lista de reservaciones a la pantalla de lista
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +128,7 @@ class RestaurantDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              restaurantName,
+              nombreRestaurante,
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -118,8 +141,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ReservationPage(
-                      restaurantName: restaurantName,
-                      reservations: [], addReservation: (Reservation ) {  }, // Lista de reservaciones inicial vacía
+                      restaurantName: nombreRestaurante,
+                      reservations: reservacion, // Pasa la lista de reservaciones
+                      onShowReservations: () {
+                        mostrarReservaciones(context); // Muestra la lista de reservaciones
+                      }, addReservation: (Reservacion reservation) {  },
                     ),
                   ),
                 );

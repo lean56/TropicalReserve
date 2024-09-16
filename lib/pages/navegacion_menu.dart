@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myapp/pages/home_page.dart';
-import 'package:myapp/pages/list_page.dart';
-import 'package:myapp/pages/print_reservation_page.dart';
-
+import 'package:myapp/lista_global.dart';
+import 'disponibilidad_page.dart';
+import 'home_page.dart';
+import 'select_restaurant_page.dart';
 import 'reservation_page.dart';
 
 class NavigationMenu extends StatelessWidget {
@@ -20,8 +20,8 @@ class NavigationMenu extends StatelessWidget {
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: "Inicio"),
             NavigationDestination(icon: Icon(Icons.local_restaurant), label: "Reservar"),
-            NavigationDestination(icon: Icon(Icons.event_available), label: "Disponible"),
-            NavigationDestination(icon: Icon(Icons.print), label: "Imprimir"),
+            NavigationDestination(icon: Icon(Icons.list), label: "Ver Reservaciones"),
+            NavigationDestination(icon: Icon(Icons.visibility), label: "Disponibilidad"),
           ],
         ),
       ),
@@ -36,8 +36,8 @@ class NavigationController extends GetxController {
   final screens = [
     const HomeScreen(),
     RestaurantView(),
-    Container(color: Colors.blue), // Placeholder for "Disponible"
-    RestaurantView(), // Corregido aquí
+    ReservationsListScreen(reservations: listaGlobal),
+    DisponibilidadPage(),
   ];
 
   void changeIndex(int index) {
