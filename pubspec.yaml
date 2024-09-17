@@ -1,6 +1,6 @@
 name: myapp
-description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+description: "Proyecti final Nagua."
+publish_to: 'Leonardo Emil Amparo' 
 
 version: 1.0.0+1
 
@@ -14,6 +14,7 @@ dependencies:
   get: ^4.6.5
   flutter_lints: ^3.0.0
   quickalert: ^1.1.0
+  loading_animation_widget: ^1.2.0 
 
 dev_dependencies:
   flutter_test:

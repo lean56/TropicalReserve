@@ -20,15 +20,15 @@ class DisponibilidadPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '6-8 P.M.: ${isRestaurantAvailable(restaurantName, '6-8 P.M.') ? 'Disponible' : 'No disponible'}',
+                    '6-8 P.M.: ${restauranteDisponible(restaurantName, '6-8 P.M.') ? 'Disponible' : 'No disponible'}',
                     style: TextStyle(
-                      color: isRestaurantAvailable(restaurantName, '6-8 P.M.') ? Colors.green : Colors.red,
+                      color: restauranteDisponible(restaurantName, '6-8 P.M.') ? Colors.green : Colors.red,
                     ),
                   ),
                   Text(
-                    '8-10 P.M.: ${isRestaurantAvailable(restaurantName, '8-10 P.M.') ? 'Disponible' : 'No disponible'}',
+                    '8-10 P.M.: ${restauranteDisponible(restaurantName, '8-10 P.M.') ? 'Disponible' : 'No disponible'}',
                     style: TextStyle(
-                      color: isRestaurantAvailable(restaurantName, '8-10 P.M.') ? Colors.green : Colors.red,
+                      color: restauranteDisponible(restaurantName, '8-10 P.M.') ? Colors.green : Colors.red,
                     ),
                   ),
                 ],
@@ -40,7 +40,7 @@ class DisponibilidadPage extends StatelessWidget {
     );
   }
 
-  bool isRestaurantAvailable(String restaurantName, String horario) {
+  bool restauranteDisponible(String restaurantName, String horario) {
     int capacidadMaximaRestaurante = capacidadMaxima[restaurantName] ?? 0;
     int capacidadActual = 0;
 
