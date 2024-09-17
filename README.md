@@ -1,7 +1,6 @@
 # Tropical Reserve
-
+Creado por: 
 Leonardo Emil Amparo
 
-## Getting Started
-
-Proyecto Final Nagua. Diplomado en Programación Móvil (Android) 2024. 
+## Diplomado en Programación Móvil (Android) 2024. 
+Proyecto Final Nagua. (ITLA)
